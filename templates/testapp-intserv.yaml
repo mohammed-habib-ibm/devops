@@ -1,0 +1,26 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: IntegrationServer
+metadata:
+  name: lowercase(REPLACEWITH_APPNAME)-integration-server
+  labels:
+    servername: lowercase(REPLACEWITH_APPNAME)-integration-server
+spec:
+  version: REPLACEWITH_VERSION
+  pod:
+   containers:
+    runtime:
+      image: image-registry.openshift-image-registry.svc:5000/ace/lowercase(REPLACEWITH_APPNAME)-ace-image:REPLACEWITH_VERSION
+  license:
+    accept: true
+    license: L-APEH-BPUCJK 
+    use: CloudPakForIntegrationNonProduction
+  barURL: ''
+  #####################
+  # for each obj in config json file 
+  configurations:
+    - REPALCEWITH_confname_FROM_JSON
+  designerFlowsOperationMode: disabled
+  service:  
+    endpointType: http
+  useCommonServices: true
+  replicas: 1

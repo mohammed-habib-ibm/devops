@@ -1,0 +1,20 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+ name: lowercase(REPLACEWITH_APPNAME)-bc
+spec:
+ source:
+  git:
+   uri: "REPLACEWITH_REPO_URL"
+ strategy:
+  type: Docker
+  dockerStrategy:
+   from:
+    kind: "DockerImage"
+    name: "cp.icr.io/cp/appc/ace-server-prod@sha256:bdeb8b839be9e095bf3c74be8b9f02f54cf6c0a740b8f45f93d01265549d9e83"
+   pullSecret:
+    name: ibm-entitlement-key    
+ output:
+  to:
+   kind: ImageStreamTag
+   name: 'lowercase(REPLACEWITH_APPNAME)-ace-image:REPLACEWITH_VERSION'

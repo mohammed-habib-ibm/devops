@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Login') {
+            steps {
+                sh '''
+                oc login  -u rasha.aly.ibm -p rasha@123 --insecure-skip-tls-verify --server=https://api.tjcocp.jazz.com.pk:6443
+                '''
+            }
+        }
+        stage('Build Image') {
+            steps {
+                sh '''
+                oc -n ace apply -f REPLACEWITH_APPNAME-bc.yaml 
+                oc -n ace start-build  REPLACEWITH_APPNAME-bc -F -w
+                '''
+            }
+        }
+        stage('Create  Configurations CRs') {
+            steps {
+					##############################################################
+					# loop on objects in config-json file
+					# for each object do
+					# 
+						sh '''
+						filecontent=$(base64 -w 0 ConfigurationInputs/REPLACEWITH_file_FROM_JSON_OBJ) 
+						sed -e "s/REPLACEWITH_namespace/ace/" -e "s~REPLACEWITH-filecontent-bas64~${filecontent}~" config-template.yaml > ConfigurationResources/REPLACEWITH_APPNAME_TYPE_FROM_JSON_OBJ.yaml
+						'''
+            }
+        }
+        stage('Apply Configurations ') {
+            steps {
+					##############################################################
+					# loop on objects in config-json file
+					# for each object do
+					# 
+						sh '''
+							  oc apply -f REPLACEWITH_APPNAME_TYPE_FROM_JSON_OBJ.yaml
+						'''
+            }
+        stage('Apply app connect Integration server ') {
+            steps {
+						script{
+								def integ_serv = sh(script: "oc -n ace get integrationserver -l servername=REPLACEWITH_APPNAME-integration-server -o name", returnStdout: true)
+						        if (integ_serv==""){
+									sh '''
+									  oc -n ace apply -f REPLACEWITH_APPNAME-intserv.yaml 
+									'''
+								}else{
+									sh '''
+									  oc -n ace delete integrationserver REPLACEWITH_APPNAME-integration-server
+									  oc -n ace apply -f REPLACEWITH_APPNAME-intserv.yaml 
+									'''
+								}
+								
+						}
+            }
+        }
+    }
+}

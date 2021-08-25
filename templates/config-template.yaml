@@ -1,0 +1,8 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: Configuration
+metadata:
+  name: REPLACEWITH_confname_FROM_JSON_OBJ
+  namespace: REPLACEWITH_namespace
+spec:
+  contents: REPLACEWITH-filecontent-bas64
+  type: REPLACEWITH_type_FROM_JSON_OBJ
